@@ -1,9 +1,33 @@
+import { signIn, useSession } from "next-auth/react";
+import { api } from "../../services/api";
+import { getStripeJs } from "../../services/stripe-js";
 import { Product } from "../../types";
 import styles from "./styles.module.scss";
 
 export function SubscribeButton({ priceId }: Product) {
+  const status = useSession()["status"];
+
+  async function handleSubscribe() {
+    if (!(status === "authenticated")) {
+      signIn("github");
+      return;
+    }
+    try {
+      const { data } = await api.post("/subscribe");
+      const { sessionId } = data;
+      const stripe = await getStripeJs();
+      await stripe.redirectToCheckout({ sessionId });
+    } catch (error) {
+      // TODO: improve error handling
+      alert(error.message);
+    }
+  }
   return (
-    <button type="button" className={styles.subScribeButton}>
+    <button
+      type="button"
+      className={styles.subScribeButton}
+      onClick={handleSubscribe}
+    >
       Subscribe now
     </button>
   );
