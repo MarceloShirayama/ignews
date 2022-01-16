@@ -3,12 +3,8 @@ import { GetStaticProps } from "next";
 import Head from "next/head";
 import { SubscribeButton } from "../components/SubscribeButton";
 import { stripe } from "../services/stripe";
+import { Product } from "../types";
 import styles from "./home.module.scss";
-
-export type Product = {
-  priceId: string;
-  amount?: number;
-};
 
 type HomeProps = {
   product: Product;

@@ -1,4 +1,4 @@
-import { Product } from "../../pages";
+import { Product } from "../../types";
 import styles from "./styles.module.scss";
 
 export function SubscribeButton({ priceId }: Product) {
