@@ -1,23 +1,20 @@
 /* eslint-disable @next/next/no-img-element */
-import Link from "next/link";
-import { useRouter } from "next/router";
+import ActiveLink from "../ActiveLink";
 import { SignInButton } from "../SignInButton";
 import styles from "./styles.module.scss";
 
 export function Header() {
-  const { asPath } = useRouter();
-
   return (
     <header className={styles.headerContainer}>
       <div className={styles.headerContent}>
         <img src="/images/logo.svg" alt="Logo ig.news" />
         <nav>
-          <Link href="/">
-            <a className={asPath === "/" ? styles.active : ""}>Home</a>
-          </Link>
-          <Link href="/posts">
-            <a className={asPath === "/posts" ? styles.active : ""}>Posts</a>
-          </Link>
+          <ActiveLink href="/" activeClassName={styles.active}>
+            <a>Home</a>
+          </ActiveLink>
+          <ActiveLink href="/posts" activeClassName={styles.active}>
+            <a>Posts</a>
+          </ActiveLink>
         </nav>
         <SignInButton />
       </div>
