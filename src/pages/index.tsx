@@ -18,7 +18,7 @@ export default function Home({ product }: HomeProps) {
       </Head>
       <main className={styles.contentContainer}>
         <section className={styles.hero}>
-          <span>👏 Hey, welcome</span>
+          <span>Hey, welcome</span>
           <h1>
             News about the <span>React</span> world.
           </h1>
@@ -26,7 +26,7 @@ export default function Home({ product }: HomeProps) {
             Get access to all the publications <br />
             <span>for {product.amount} month</span>
           </p>
-          <SubscribeButton priceId={product.priceId} />
+          <SubscribeButton />
         </section>
         <img src="/images/avatar.svg" alt="Girl coding" />
       </main>
