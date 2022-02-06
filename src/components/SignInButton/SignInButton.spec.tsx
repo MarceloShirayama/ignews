@@ -17,4 +17,22 @@ describe("SignInButton component", () => {
 
     expect(screen.getByText("Sign in with GitHub")).toBeInTheDocument();
   });
+
+  it("renders correctly when user is authenticated", () => {
+    const mockUseSession: MockedFunction<typeof useSession> = useSession as any;
+    mockUseSession.mockReturnValueOnce({
+      data: {
+        activeSubscription: {},
+        expires: "",
+        user: {
+          name: "John Doe",
+        },
+      },
+      status: "authenticated",
+    });
+
+    render(<SignInButton />);
+
+    expect(screen.getByText("John Doe")).toBeInTheDocument();
+  });
 });
