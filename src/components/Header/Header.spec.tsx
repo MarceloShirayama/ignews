@@ -24,6 +24,8 @@ describe("Home component", () => {
   it("renders correctly", () => {
     render(<Header />);
 
+    screen.logTestingPlaygroundURL();
+
     const image = document.querySelector("img") as HTMLImageElement;
 
     expect(image).toBeInTheDocument();
