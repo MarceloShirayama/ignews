@@ -28,13 +28,52 @@ const fakeLastPublicationDateFormatted = new Date(
   year: "numeric",
 });
 
+// # mocks
+const mockUseSession = (isActive: object = null) => {
+  const mockUseSession: MockedFunction<typeof useSession> = useSession as any;
+  const result = mockUseSession.mockReturnValueOnce({
+    data: isActive,
+  } as any);
+  return result;
+};
+
+const mockUseRouter = () => {
+  const mockUseRouter: MockedFunction<typeof useRouter> = useRouter as any;
+  const mockPush = jest.fn();
+  mockUseRouter.mockReturnValueOnce({
+    push: mockPush,
+  } as any);
+  return mockPush;
+};
+
+type GetPrismicClientMock = {
+  data: {
+    title: [{ type: string; text: string }];
+    content: [{ type: string; text: string }];
+  };
+  last_publication_date: string;
+};
+
+const mockGetPrismicClient = ({
+  data,
+  last_publication_date,
+}: GetPrismicClientMock) => {
+  const mockGetPrismicClient: MockedFunction<typeof getPrismicClient> =
+    getPrismicClient as any;
+
+  const result = mockGetPrismicClient.mockReturnValueOnce({
+    getByUID: jest.fn().mockResolvedValueOnce({
+      data,
+      last_publication_date,
+    }),
+  } as any);
+
+  return result;
+};
+
 describe("PostPreview page", () => {
   it("renders correctly", () => {
-    const mockUseSession: MockedFunction<typeof useSession> = useSession as any;
-    mockUseSession.mockReturnValueOnce({
-      data: null,
-      status: "loading",
-    });
+    mockUseSession();
 
     render(<PostPreview post={postFake} />);
 
@@ -45,17 +84,8 @@ describe("PostPreview page", () => {
   });
 
   it("redirects user to full post when active subscription", async () => {
-    const mockUseSession: MockedFunction<typeof useSession> = useSession as any;
-    const mockUseRouter: MockedFunction<typeof useRouter> = useRouter as any;
-    const mockPush = jest.fn();
-
-    mockUseSession.mockReturnValueOnce({
-      data: { activeSubscription },
-    } as any);
-
-    mockUseRouter.mockReturnValueOnce({
-      push: mockPush,
-    } as any);
+    mockUseSession({ activeSubscription });
+    const mockPush = mockUseRouter();
 
     render(<PostPreview post={postFake} />);
 
@@ -63,24 +93,15 @@ describe("PostPreview page", () => {
   });
 
   it("loads initial data with getStaticProps", async () => {
-    const mockUseSession: MockedFunction<typeof useSession> = useSession as any;
+    mockUseSession({ activeSubscription });
 
-    mockUseSession.mockReturnValueOnce({
-      data: { activeSubscription },
-    } as any);
-
-    const mockGetPrismicClient: MockedFunction<typeof getPrismicClient> =
-      getPrismicClient as any;
-
-    mockGetPrismicClient.mockReturnValueOnce({
-      getByUID: jest.fn().mockResolvedValueOnce({
-        data: {
-          title: [{ type: "heading", text: postFake.title }],
-          content: [{ type: "paragraph", text: postFake.content }],
-        },
-        last_publication_date: lastPublicationDateFake,
-      }),
-    } as any);
+    mockGetPrismicClient({
+      data: {
+        title: [{ type: "heading", text: postFake.title }],
+        content: [{ type: "paragraph", text: postFake.content }],
+      },
+      last_publication_date: lastPublicationDateFake,
+    });
 
     const response = await getStaticProps({ params: { slug: postFake.slug } });
 
